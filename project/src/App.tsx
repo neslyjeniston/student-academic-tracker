@@ -16,6 +16,7 @@ type AdminPage = 'DASHBOARD' | 'ANALYTICS';
 
 function App() {
 
+  // ✅ Render backend URL
   const API_BASE = "https://student-academic-tracker-esh9.onrender.com";
 
   const [role, setRole] = useState<Role | null>(null);
@@ -36,7 +37,7 @@ function App() {
       const data = await res.json();
       setStudentsList(Array.isArray(data) ? data : []);
     } catch (err) {
-      console.error(err);
+      console.error("Fetch students error:", err);
       setStudentsList([]);
     }
   };
@@ -48,6 +49,8 @@ function App() {
   /* ================= AUTH ================= */
 
   const handleStudentLogin = (credentials: LoginCredentials) => {
+    if (!Array.isArray(studentsList)) return;
+
     const student = studentsList.find(
       s =>
         s.rollNumber === credentials.rollNumber &&
@@ -179,17 +182,6 @@ function App() {
     courseId: string,
     grade: string
   ) => {
-    const student = studentsList.find(s => s._id === studentId);
-    const semester = student?.semesters.find(sem => sem._id === semId);
-    const existingCourse = semester?.courses.find(c => c._id === courseId);
-
-    if (!existingCourse) return;
-
-    const updatedCourse = {
-      ...existingCourse,
-      grade
-    };
-
     await fetch(
       `${API_BASE}/students/${studentId}/semesters/${semId}/courses/${courseId}`,
       {
@@ -198,7 +190,7 @@ function App() {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${getToken()}`
         },
-        body: JSON.stringify(updatedCourse),
+        body: JSON.stringify({ grade }),
       }
     );
 
@@ -328,6 +320,8 @@ function App() {
       </div>
     );
   }
+
+  /* ================= LOGIN ================= */
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-slate-50">
