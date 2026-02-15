@@ -1,14 +1,14 @@
 {
-  "name": "backend",
+  "name": "student-academic-tracker-backend",
   "version": "1.0.0",
+  "description": "Backend API for Student Academic Tracker",
   "main": "index.js",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "node index.js",
+    "dev": "nodemon index.js"
   },
-  "keywords": [],
-  "author": "",
+  "author": "Nesly Jeniston M",
   "license": "ISC",
-  "description": "",
   "dependencies": {
     "bcryptjs": "^3.0.3",
     "cors": "^2.8.6",
