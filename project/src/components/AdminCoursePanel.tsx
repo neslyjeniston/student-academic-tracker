@@ -134,7 +134,7 @@ export const AdminCoursePanel = ({
               value={newGrade}
               onChange={(e) => setNewGrade(e.target.value)}
             >
-              {['O', 'A+', 'A', 'B+', 'B', 'C', 'F'].map(g => (
+              {['O', 'A+', 'A', 'B+', 'B', 'C', 'R'].map(g => (
                 <option key={g} value={g}>{g}</option>
               ))}
             </select>
