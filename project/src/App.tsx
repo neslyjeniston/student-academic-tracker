@@ -16,6 +16,8 @@ type AdminPage = 'DASHBOARD' | 'ANALYTICS';
 
 function App() {
 
+  const API_BASE = "https://student-academic-tracker-esh9.onrender.com";
+
   const [role, setRole] = useState<Role | null>(null);
   const [loginMode, setLoginMode] = useState<LoginMode>('STUDENT');
   const [loginError, setLoginError] = useState('');
@@ -30,11 +32,12 @@ function App() {
 
   const fetchStudents = async () => {
     try {
-      const res = await fetch('http://localhost:5000/students');
+      const res = await fetch(`${API_BASE}/students`);
       const data = await res.json();
-      setStudentsList(data);
+      setStudentsList(Array.isArray(data) ? data : []);
     } catch (err) {
       console.error(err);
+      setStudentsList([]);
     }
   };
 
@@ -63,7 +66,7 @@ function App() {
 
   const handleAdminLogin = async (credentials: LoginCredentials) => {
     try {
-      const res = await fetch('http://localhost:5000/auth/admin/login', {
+      const res = await fetch(`${API_BASE}/auth/admin/login`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(credentials),
@@ -92,7 +95,7 @@ function App() {
   /* ================= STUDENT CRUD ================= */
 
   const addStudent = async (student: Student) => {
-    await fetch('http://localhost:5000/students', {
+    await fetch(`${API_BASE}/students`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -106,7 +109,7 @@ function App() {
   const updateStudent = async (student: Student) => {
     if (!student._id) return;
 
-    await fetch(`http://localhost:5000/students/${student._id}`, {
+    await fetch(`${API_BASE}/students/${student._id}`, {
       method: 'PUT',
       headers: {
         'Content-Type': 'application/json',
@@ -119,7 +122,7 @@ function App() {
   };
 
   const deleteStudent = async (id: string) => {
-    await fetch(`http://localhost:5000/students/${id}`, {
+    await fetch(`${API_BASE}/students/${id}`, {
       method: 'DELETE',
       headers: { Authorization: `Bearer ${getToken()}` },
     });
@@ -130,7 +133,7 @@ function App() {
   /* ================= SEMESTER CRUD ================= */
 
   const addSemester = async (studentId: string, semesterNumber: number) => {
-    await fetch(`http://localhost:5000/students/${studentId}/semesters`, {
+    await fetch(`${API_BASE}/students/${studentId}/semesters`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -143,7 +146,7 @@ function App() {
   };
 
   const deleteSemester = async (studentId: string, semId: string) => {
-    await fetch(`http://localhost:5000/students/${studentId}/semesters/${semId}`, {
+    await fetch(`${API_BASE}/students/${studentId}/semesters/${semId}`, {
       method: 'DELETE',
       headers: { Authorization: `Bearer ${getToken()}` },
     });
@@ -158,7 +161,7 @@ function App() {
     semId: string,
     course: { name: string; credits: number; grade: string }
   ) => {
-    await fetch(`http://localhost:5000/students/${studentId}/semesters/${semId}/courses`, {
+    await fetch(`${API_BASE}/students/${studentId}/semesters/${semId}/courses`, {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
@@ -188,7 +191,7 @@ function App() {
     };
 
     await fetch(
-      `http://localhost:5000/students/${studentId}/semesters/${semId}/courses/${courseId}`,
+      `${API_BASE}/students/${studentId}/semesters/${semId}/courses/${courseId}`,
       {
         method: 'PUT',
         headers: {
@@ -208,7 +211,7 @@ function App() {
     courseId: string
   ) => {
     await fetch(
-      `http://localhost:5000/students/${studentId}/semesters/${semId}/courses/${courseId}`,
+      `${API_BASE}/students/${studentId}/semesters/${semId}/courses/${courseId}`,
       {
         method: 'DELETE',
         headers: { Authorization: `Bearer ${getToken()}` },
@@ -285,7 +288,6 @@ function App() {
               onAddCourse={addCourse}
               onUpdateCourse={updateCourse}
               onDeleteCourse={deleteCourse}
-              //onSelectStudent={setSelectedStudent}
             />
           )}
 
@@ -306,7 +308,6 @@ function App() {
     return (
       <div className="p-6 space-y-6">
         <StudentHeader student={currentStudent} onLogout={logout} />
-
         <CGPAChart semesters={currentStudent.semesters} />
 
         <div className="text-2xl font-black text-blue-600">
@@ -327,8 +328,6 @@ function App() {
       </div>
     );
   }
-
-  /* ================= LOGIN ================= */
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-slate-50">
