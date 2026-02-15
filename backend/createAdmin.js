@@ -1,3 +1,4 @@
+require('dotenv').config();
 const mongoose = require('mongoose');
 const bcrypt = require('bcryptjs');
 const Admin = require('./models/Admin');
@@ -5,7 +6,7 @@ const Admin = require('./models/Admin');
 /* ===============================
    🔗 CONNECT DATABASE
 ================================= */
-mongoose.connect('mongodb://127.0.0.1:27017/student_tracker')
+mongoose.connect(process.env.MONGO_URI)
   .then(() => console.log('✅ MongoDB connected'))
   .catch(err => {
     console.error('❌ DB Connection Error:', err);
@@ -25,7 +26,6 @@ mongoose.connect('mongodb://127.0.0.1:27017/student_tracker')
       process.exit(0);
     }
 
-    // Check if admin already exists
     const existingAdmin = await Admin.findOne({ username });
     if (existingAdmin) {
       console.log('⚠️ Admin already exists with this username');

@@ -9,10 +9,11 @@ const router = express.Router();
 ===================================================== */
 router.get('/', async (req, res) => {
   try {
-    const students = await Student.find().sort({ createdAt: -1 });
-    res.json(students);
+    const students = await Student.find(); // ❗ removed sort for safety
+    res.status(200).json(students);
   } catch (err) {
-    res.status(500).json({ message: 'Failed to fetch students' });
+    console.error("🔥 GET /students error:", err);
+    res.status(500).json({ message: err.message });
   }
 });
 
@@ -45,6 +46,7 @@ router.post('/', auth, async (req, res) => {
     res.status(201).json(student);
 
   } catch (err) {
+    console.error("🔥 ADD STUDENT error:", err);
     res.status(400).json({ message: err.message });
   }
 });
@@ -62,9 +64,7 @@ router.put('/:id', auth, async (req, res) => {
     }
 
     student.name = name ?? student.name;
-    student.department = department
-      ? department.toUpperCase()
-      : student.department;
+    student.department = department ? department.toUpperCase() : student.department;
     student.batch = batch ?? student.batch;
     student.dateOfBirth = dateOfBirth ?? student.dateOfBirth;
 
@@ -72,6 +72,7 @@ router.put('/:id', auth, async (req, res) => {
     res.json(student);
 
   } catch (err) {
+    console.error("🔥 UPDATE STUDENT error:", err);
     res.status(400).json({ message: err.message });
   }
 });
@@ -88,9 +89,7 @@ router.post('/:id/semesters', auth, async (req, res) => {
     }
 
     const student = await Student.findById(req.params.id);
-    if (!student) {
-      return res.status(404).json({ message: 'Student not found' });
-    }
+    if (!student) return res.status(404).json({ message: 'Student not found' });
 
     const exists = student.semesters.some(
       sem => sem.semesterNumber === semesterNumber
@@ -109,35 +108,13 @@ router.post('/:id/semesters', auth, async (req, res) => {
     res.status(201).json(student);
 
   } catch (err) {
+    console.error("🔥 ADD SEMESTER error:", err);
     res.status(400).json({ message: err.message });
   }
 });
 
 /* =====================================================
-   ✏️ UPDATE SEMESTER NUMBER (ADMIN ONLY)
-===================================================== */
-router.put('/:id/semesters/:semId', auth, async (req, res) => {
-  try {
-    const { semesterNumber } = req.body;
-
-    const student = await Student.findById(req.params.id);
-    if (!student) return res.status(404).json({ message: 'Student not found' });
-
-    const semester = student.semesters.id(req.params.semId);
-    if (!semester) return res.status(404).json({ message: 'Semester not found' });
-
-    semester.semesterNumber = semesterNumber;
-
-    await student.save();
-    res.json(student);
-
-  } catch (err) {
-    res.status(400).json({ message: err.message });
-  }
-});
-
-/* =====================================================
-   ❌ DELETE SEMESTER (ADMIN ONLY)
+   ❌ DELETE SEMESTER
 ===================================================== */
 router.delete('/:id/semesters/:semId', auth, async (req, res) => {
   try {
@@ -148,17 +125,18 @@ router.delete('/:id/semesters/:semId', auth, async (req, res) => {
     if (!semester) return res.status(404).json({ message: 'Semester not found' });
 
     semester.deleteOne();
-
     await student.save();
+
     res.json(student);
 
   } catch (err) {
+    console.error("🔥 DELETE SEMESTER error:", err);
     res.status(400).json({ message: err.message });
   }
 });
 
 /* =====================================================
-   ➕ ADD COURSE (ADMIN ONLY)
+   ➕ ADD COURSE
 ===================================================== */
 router.post('/:id/semesters/:semId/courses', auth, async (req, res) => {
   try {
@@ -174,14 +152,6 @@ router.post('/:id/semesters/:semId/courses', auth, async (req, res) => {
     const semester = student.semesters.id(req.params.semId);
     if (!semester) return res.status(404).json({ message: 'Semester not found' });
 
-    const exists = semester.courses.some(
-      c => c.name.toLowerCase() === name.toLowerCase()
-    );
-
-    if (exists) {
-      return res.status(409).json({ message: 'Course already exists' });
-    }
-
     semester.courses.push({
       name,
       credits,
@@ -193,12 +163,13 @@ router.post('/:id/semesters/:semId/courses', auth, async (req, res) => {
     res.status(201).json(student);
 
   } catch (err) {
+    console.error("🔥 ADD COURSE error:", err);
     res.status(400).json({ message: err.message });
   }
 });
 
 /* =====================================================
-   ✏️ UPDATE COURSE (ADMIN ONLY)
+   ✏️ UPDATE COURSE
 ===================================================== */
 router.put('/:id/semesters/:semId/courses/:courseId', auth, async (req, res) => {
   try {
@@ -222,12 +193,13 @@ router.put('/:id/semesters/:semId/courses/:courseId', auth, async (req, res) => 
     res.json(student);
 
   } catch (err) {
+    console.error("🔥 UPDATE COURSE error:", err);
     res.status(400).json({ message: err.message });
   }
 });
 
 /* =====================================================
-   ❌ DELETE COURSE (ADMIN ONLY)
+   ❌ DELETE COURSE
 ===================================================== */
 router.delete('/:id/semesters/:semId/courses/:courseId', auth, async (req, res) => {
   try {
@@ -241,17 +213,18 @@ router.delete('/:id/semesters/:semId/courses/:courseId', auth, async (req, res) 
     if (!course) return res.status(404).json({ message: 'Course not found' });
 
     course.deleteOne();
-
     await student.save();
+
     res.json(student);
 
   } catch (err) {
+    console.error("🔥 DELETE COURSE error:", err);
     res.status(400).json({ message: err.message });
   }
 });
 
 /* =====================================================
-   ❌ DELETE STUDENT (ADMIN ONLY)
+   ❌ DELETE STUDENT
 ===================================================== */
 router.delete('/:id', auth, async (req, res) => {
   try {
@@ -263,7 +236,8 @@ router.delete('/:id', auth, async (req, res) => {
     res.json({ message: 'Student deleted successfully' });
 
   } catch (err) {
-    res.status(400).json({ message: 'Failed to delete student' });
+    console.error("🔥 DELETE STUDENT error:", err);
+    res.status(400).json({ message: err.message });
   }
 });
 
