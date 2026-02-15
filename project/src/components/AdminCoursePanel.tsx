@@ -68,7 +68,7 @@ export const AdminCoursePanel = ({
                       onChange={(e) => setEditGrade(e.target.value)}
                       className="bg-white border border-blue-200 rounded px-2 py-1 text-xs font-bold outline-none ring-2 ring-blue-500/10"
                     >
-                      {['O', 'A+', 'A', 'B+', 'B', 'C', 'P', 'F'].map(g => (
+                      {['O', 'A+', 'A', 'B+', 'B', 'C', 'F'].map(g => (
                         <option key={g} value={g}>{g}</option>
                       ))}
                     </select>
@@ -134,7 +134,7 @@ export const AdminCoursePanel = ({
               value={newGrade}
               onChange={(e) => setNewGrade(e.target.value)}
             >
-              {['O', 'A+', 'A', 'B+', 'B', 'C', 'P', 'F'].map(g => (
+              {['O', 'A+', 'A', 'B+', 'B', 'C', 'F'].map(g => (
                 <option key={g} value={g}>{g}</option>
               ))}
             </select>

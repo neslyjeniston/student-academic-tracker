@@ -5,6 +5,5 @@ export const GRADES = [
   'B+',
   'B',
   'C',
-  'D',
   'R'
 ];

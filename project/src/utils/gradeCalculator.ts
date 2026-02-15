@@ -10,7 +10,6 @@ const gradeToPoint = (grade: string): number => {
     'B+': 7,
     B: 6,
     C: 5,
-    D: 4,
     R: -1,
   };
 
