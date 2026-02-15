@@ -17,7 +17,7 @@ type AdminPage = 'DASHBOARD' | 'ANALYTICS';
 function App() {
 
   // ✅ Render backend URL
-  const API_BASE = "https://student-academic-tracker-esh9.onrender.com";
+  const API_BASE = import.meta.env.VITE_API_BASE as string;
 
   const [role, setRole] = useState<Role | null>(null);
   const [loginMode, setLoginMode] = useState<LoginMode>('STUDENT');
