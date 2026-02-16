@@ -10,7 +10,7 @@ const gradeToPoint = (grade: string): number => {
     'B+': 7,
     B: 6,
     C: 5,
-    R: -1,
+    R: 0,
   };
 
   // Anything not listed = FAIL
