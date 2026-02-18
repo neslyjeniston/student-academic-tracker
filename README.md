@@ -5,12 +5,6 @@ The system provides a secure Student Portal and an advanced Admin Dashboard for 
 
 ---
 
-## 🌐 Live Demo
-
-🚀 (Add your deployed link here after deployment)
-
----
-
 ## 📌 Project Overview
 
 Student Academic Tracker is designed to simplify academic record management.  
@@ -19,8 +13,6 @@ It allows administrators to manage students, semesters, and courses, while stude
 This project demonstrates full-stack development using modern technologies with authentication, analytics, and dynamic UI.
 
 ---
-
-## ✨ Features
 
 ### 👨‍🎓 Student Portal
 - Secure login using Roll Number + Date of Birth
